@@ -5,7 +5,7 @@ An experiment
 ## APIs
 
 - [x] Swarm
-- [ ] Mondo
+- [x] Mondo
 - [ ] Strava
 
 - [ ] Facebook location
