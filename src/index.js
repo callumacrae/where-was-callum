@@ -21,7 +21,9 @@ platform.getStatus()
 			throw new Error('please auth')
 		}
 
-		return platform.getLocations({ count: 5 });
+		return platform.getLocations({
+			since: new Date(Date.now() - 3 * 24 * 3600 * 1000)
+		});
 	})
 	.then(validateLocationData)
 	.then(function (locations) {

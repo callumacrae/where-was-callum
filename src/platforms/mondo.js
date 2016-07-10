@@ -2,7 +2,7 @@ var mondo = require('mondo-bank');
 
 exports.getLocations = function (options) {
 	options = Object.assign({
-		count: 50
+		since: new Date(Date.now() - 24 * 3600 * 1000)
 	}, options);
 
 	var accountId = process.env.MONDO_ACCOUNT_ID;
@@ -11,7 +11,7 @@ exports.getLocations = function (options) {
 	return mondo.transactions({
 		account_id: accountId,
 		'expand[]': 'merchant',
-		limit: options.count
+		since: options.since.toISOString()
 	}, accessToken)
 		.then(function ({ transactions }) {
 			return transactions

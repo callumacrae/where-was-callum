@@ -36,7 +36,7 @@ exports.getRoutes = function () {
 
 exports.getLocations = function (options) {
 	options = Object.assign({
-		count: 50
+		since: new Date(Date.now() - 24 * 3600 * 1000)
 	}, options);
 
 	if (options.count > 100) {
@@ -54,7 +54,7 @@ exports.getLocations = function (options) {
 			}
 
 			foursquare.Users.getCheckins('self', {
-				limit: options.count
+				afterTimestamp: Math.floor(options.since.getTime() / 1000)
 			}, token, function (err, { checkins: { items } }) {
 				if (err) {
 					return reject(err);
