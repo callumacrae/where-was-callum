@@ -3,7 +3,7 @@ var Joi = require('joi');
 var schema = Joi.array().items(
 	Joi.object().keys({
 		place: Joi.string(),
-		time: Joi.number().integer(),
+		time: Joi.date(),
 		service: Joi.string(),
 		location: Joi.object().keys({
 			lat: Joi.number(),

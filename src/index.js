@@ -9,20 +9,23 @@ var validateLocationData = require('./validateLocationData');
 
 // THIS FILE IS BASICALLY JUST DEV CODE RN PLS IGNORE
 
-var foursquare = require('./platforms/foursquare');
+var platform = require('./platforms/mondo');
 
-app.use(foursquare.getRoutes());
+if (platform.getRoutes) {
+	app.use(platform.getRoutes());
+}
 
-foursquare.getStatus()
+platform.getStatus()
 	.then(function (status) {
 		if (status === 'unauthed') {
-			throw new Error('Foursquare unauthed: http://localhost:3000/foursquare-login')
+			throw new Error('please auth')
 		}
 
-		return foursquare.getLocations({ count: 3 });
+		return platform.getLocations({ count: 5 });
 	})
 	.then(validateLocationData)
 	.then(function (locations) {
 		console.log(locations);
 	})
 	.catch((err) => console.error(err));
+
