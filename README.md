@@ -4,11 +4,11 @@ An experiment
 
 ## APIs
 
-Swarm
-Mondo
-Strava
+- [x] Swarm
+- [ ] Mondo
+- [ ] Strava
 
-Facebook location
-Twitter location
-Messenger location?
-WhatsApp location?
+- [ ] Facebook location
+- [ ] Twitter location
+- [ ] Messenger location?
+- [ ] WhatsApp location?
