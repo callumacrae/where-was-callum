@@ -1,6 +1,8 @@
 # Where was Callum?
 
-An experiment
+:mag_right: :earth_africa: :mag:
+
+A data visualisation experiment.
 
 ## APIs
 
