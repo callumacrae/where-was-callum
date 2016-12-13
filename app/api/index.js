@@ -7,6 +7,20 @@ api.get('/', function (req, res) {
 	res.send('OK');
 });
 
+api.get('/locations', function (req, res) {
+	const platforms = require('../platforms');
+
+	Promise.all(Object.keys(platforms).map((platform) => platforms[platform].getLocations({}, req)))
+		.then((datas) => {
+			return datas
+				.reduce((flatDatas, data) => flatDatas.concat(data), [])
+				.sort((a, b) => a.time.getTime() - b.time.getTime()); // @todo: merge sort?
+		})
+		.then(validateLocationData)
+		.then((data) => res.send(data))
+		.catch((err) => res.status(500).send(err));
+});
+
 api.get('/locations/:id', function (req, res) {
 	const service = require('../platforms')[req.params.id];
 

@@ -44,7 +44,7 @@ exports.getLocations = function (options, req) {
 
 			items = items.map((checkin) => ({
 				place: checkin.venue.name,
-				time: new Date(checkin.createdAt),
+				time: new Date(checkin.createdAt * 1000),
 				service: 'foursquare',
 				location: checkin.venue.location
 			}));
