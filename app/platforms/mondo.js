@@ -1,12 +1,45 @@
+var qs = require('querystring');
 var mondo = require('mondo-bank');
+var got = require('got');
 
-exports.getLocations = function (options) {
+const clientId = process.env.MONDO_CLIENT_ID;
+const clientSecret = process.env.MONDO_CLIENT_SECRET;
+
+exports.getRedirectUrl = function () {
+	return 'https://auth.getmondo.co.uk/?' + qs.stringify({
+			client_id: clientId,
+			redirect_uri: 'http://localhost:8080/oauth/callback/mondo',
+			response_type: 'code'
+		});
+};
+
+exports.authorize = function (token, req) {
+	return got.post('https://api.monzo.com/oauth2/token', {
+		json: true,
+		body: {
+			grant_type: 'authorization_code',
+			client_id: clientId,
+			client_secret: clientSecret,
+			redirect_uri: 'http://localhost:8080/oauth/callback/mondo',
+			code: token
+		}
+	})
+		.then((res) => {
+			req.session.mondo = res.body;
+			return mondo.accounts(req.session.mondo.access_token);
+		})
+		.then((data) => {
+			req.session.mondoAccounts = data.accounts;
+		});
+};
+
+exports.getLocations = function (options, req) {
 	options = Object.assign({
-		since: new Date(Date.now() - 24 * 3600 * 1000)
+		since: new Date(Date.now() - 7 * 24 * 3600 * 1000)
 	}, options);
 
-	var accountId = process.env.MONDO_ACCOUNT_ID;
-	var accessToken = process.env.MONDO_ACCESS_TOKEN;
+	var accountId = req.session.mondoAccounts[0].id;
+	var accessToken = req.session.mondo.access_token;
 
 	return mondo.transactions({
 		account_id: accountId,
@@ -33,10 +66,4 @@ exports.getLocations = function (options) {
 				// Remove undefined elements
 				.filter((transaction) => transaction);
 		})
-};
-
-// Can't figure out the oauth stuff right now, so just set MONDO_ACCESS_TOKEN
-// from the playground
-exports.getStatus = function () {
-	return Promise.resolve('authed');
 };
