@@ -2,7 +2,7 @@
 	<div>
 		<h1>Services</h1>
 
-		<ul v-if="statuses">
+		<ul v-if="statuses.length">
 			<li v-for="status of statuses">
 				<tick-or-nah :tick="status.authed"></tick-or-nah> {{ status.service }}
 				<a v-if="!status.authed" :href="status.authUrl">(authenticate)</a>
@@ -10,6 +10,8 @@
 		</ul>
 
 		<p v-else>Loading…</p>
+
+		<router-link :to="{ name: 'map' }" v-if="linkViewable">View map</router-link>
 	</div>
 </template>
 
@@ -27,6 +29,11 @@
 				.then((statuses) => {
 					this.statuses = statuses;
 				});
+		},
+		computed: {
+			linkViewable() {
+				return this.statuses.length && this.statuses.every((status) => status.authed);
+			}
 		},
 		components: {
 			TickOrNah

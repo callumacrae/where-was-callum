@@ -37,15 +37,18 @@ exports.authorize = function (token, req) {
 
 exports.getLocations = function (options, req) {
 	options = Object.assign({
-		since: new Date(Date.now() - 7 * 24 * 3600 * 1000)
+		since: new Date(2016, 0, 1),
+		offset: 0
 	}, options);
 
 	return new Promise(function (resolve, reject) {
 		const token = req.session.foursquareToken;
 
 		foursquare.Users.getCheckins('self', {
-			afterTimestamp: Math.floor(options.since.getTime() / 1000)
-		}, token, function (err, { checkins: { items } }) {
+			afterTimestamp: Math.floor(options.since.getTime() / 1000),
+			limit: 250,
+			offset: options.offset
+		}, token, function (err, { checkins: { count, items } }) {
 			if (err) {
 				return reject(err);
 			}
@@ -57,7 +60,16 @@ exports.getLocations = function (options, req) {
 				location: checkin.venue.location
 			}));
 
-			resolve(items);
+			// The 10 is so that there's no risk of making an infinite loop
+			if (count < items.length + options.offset + 10) {
+				resolve(items);
+			} else {
+				options.offset += 250;
+				exports.getLocations(options, req)
+					.then((newCheckins) => {
+						resolve(items.concat(newCheckins));
+					});
+			}
 		});
 	});
 };

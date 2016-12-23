@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/callumacrae/where-was-callum#readme",
   "dependencies": {
+    "apicache": "^0.7.3",
     "autoprefixer": "^6.5.4",
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
@@ -42,6 +43,7 @@
     "http-proxy-middleware": "^0.17.3",
     "joi": "^9.0.0",
     "json-loader": "^0.5.4",
+    "leaflet": "^1.0.2",
     "mondo-bank": "^0.1.11",
     "node-foursquare": "^0.3.0",
     "node-sass": "^4.0.0",

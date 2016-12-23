@@ -7,11 +7,16 @@ Vue.use(VueRouter);
 
 const router = new VueRouter({
   routes: [
-    {
-      path: '/',
-      name: 'index',
-      component: require('./components/pages/Index')
-    }
+		{
+			path: '/',
+			name: 'index',
+			component: require('./components/pages/Index')
+		},
+		{
+			path: '/map',
+			name: 'map',
+			component: require('./components/pages/Map')
+		}
   ]
 });
 const app = new Vue({ router });

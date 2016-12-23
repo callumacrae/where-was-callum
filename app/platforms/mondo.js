@@ -51,7 +51,7 @@ exports.authorize = function (token, req) {
 
 exports.getLocations = function (options, req) {
 	options = Object.assign({
-		since: new Date(Date.now() - 7 * 24 * 3600 * 1000)
+		since: new Date(2016, 0, 1)
 	}, options);
 
 	var accountId = req.session.mondoAccounts[0].id;
@@ -69,13 +69,35 @@ exports.getLocations = function (options, req) {
 						return;
 					}
 
+					// ATM locations are often wrong
+					if (transaction.merchant.online || transaction.merchant.atm) {
+						return;
+					}
+
+					const shitlist = [
+						'Mamouns Falafel',
+						'O.co/overstock.com 800',
+						'Amazon Digital Downloads',
+						'Queens Ice And Bowl'
+					];
+
+					if (shitlist.includes(transaction.merchant.name.trim())) {
+						return;
+					}
+
+					// For some reason, a few transactions ended up over here
+					const address = transaction.merchant.address;
+					if (address.latitude === 44.200797 && address.longitude === 24.5022981) {
+						return;
+					}
+
 					return {
 						place: transaction.merchant.name.trim(),
 						time: new Date(transaction.created),
 						service: 'mondo',
 						location: {
-							lat: transaction.merchant.address.latitude,
-							lng: transaction.merchant.address.longitude
+							lat: address.latitude,
+							lng: address.longitude
 						}
 					};
 				})
