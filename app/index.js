@@ -13,7 +13,7 @@ var port = process.env.PORT || 8080;
 var app = express();
 
 app.use(session({
-	secret: 'gwoijgvoijwemvoiwjef',
+	secret: process.env.HTTP_SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
 	store: new RedisStore({

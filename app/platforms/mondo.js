@@ -5,6 +5,22 @@ var got = require('got');
 const clientId = process.env.MONDO_CLIENT_ID;
 const clientSecret = process.env.MONDO_CLIENT_SECRET;
 
+exports.getStatus = function (req) {
+	if (!req.session || !req.session.mondo) {
+		return Promise.resolve({ service: 'Monzo', authed: false });
+	}
+
+	return got.get('https://api.monzo.com/ping/whoami', {
+		json: true,
+		headers: {
+			Authorization: `Bearer ${req.session.mondo.access_token}`
+		}
+	})
+		.then((res) => {
+			return { service: 'Monzo', authed: res.body.authenticated };
+		});
+};
+
 exports.getRedirectUrl = function () {
 	return 'https://auth.getmondo.co.uk/?' + qs.stringify({
 			client_id: clientId,
