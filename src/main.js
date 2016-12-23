@@ -16,6 +16,11 @@ const router = new VueRouter({
 			path: '/map',
 			name: 'map',
 			component: require('./components/pages/Map')
+		},
+		{
+			path: '/heatmap',
+			name: 'heatmap',
+			component: require('./components/pages/HeatMap')
 		}
   ]
 });

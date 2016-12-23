@@ -44,6 +44,7 @@
     "joi": "^9.0.0",
     "json-loader": "^0.5.4",
     "leaflet": "^1.0.2",
+    "leaflet.heat": "^0.2.0",
     "mondo-bank": "^0.1.11",
     "node-foursquare": "^0.3.0",
     "node-sass": "^4.0.0",

@@ -12,6 +12,7 @@
 		<p v-else>Loading…</p>
 
 		<router-link :to="{ name: 'map' }" v-if="linkViewable">View map</router-link>
+		<router-link :to="{ name: 'heatmap' }" v-if="linkViewable">View heatmap</router-link>
 	</div>
 </template>
 
