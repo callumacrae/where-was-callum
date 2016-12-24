@@ -11,7 +11,15 @@ api.get('/', function (req, res) {
 api.get('/locations', cache('30 minutes'), function (req, res) {
 	const platforms = require('../platforms');
 
-	Promise.all(Object.keys(platforms).map((platform) => platforms[platform].getLocations({}, req)))
+	const locationPromises = Object.keys(platforms).map((platform) => {
+		return platforms[platform].getLocations({}, req)
+			.catch((err) => {
+				console.error(err);
+				return [];
+			});
+	});
+
+	Promise.all(locationPromises)
 		.then((datas) => {
 			return datas
 				.reduce((flatDatas, data) => flatDatas.concat(data), [])

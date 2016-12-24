@@ -6,8 +6,10 @@ const clientId = process.env.MONDO_CLIENT_ID;
 const clientSecret = process.env.MONDO_CLIENT_SECRET;
 
 exports.getStatus = function (req) {
+	const returnObj = (authed) => ({ service: 'Monzo', authed });
+
 	if (!req.session || !req.session.mondo) {
-		return Promise.resolve({ service: 'Monzo', authed: false });
+		return Promise.resolve(returnObj(false));
 	}
 
 	return got.get('https://api.monzo.com/ping/whoami', {
@@ -16,9 +18,10 @@ exports.getStatus = function (req) {
 			Authorization: `Bearer ${req.session.mondo.access_token}`
 		}
 	})
-		.then((res) => {
-			return { service: 'Monzo', authed: res.body.authenticated };
-		});
+		.then((res) => returnObj(res.body.authenticated))
+		.catch(() => refresh(req))
+		.then(() => returnObj(true))
+		.catch(() => returnObj(false));
 };
 
 exports.getRedirectUrl = function () {
@@ -49,9 +52,25 @@ exports.authorize = function (token, req) {
 		});
 };
 
+function refresh(req) {
+	return got.post('https://api.monzo.com/oauth2/token', {
+		json: true,
+		body: {
+			grant_type: 'refresh_token',
+			client_id: clientId,
+			client_secret: clientSecret,
+			refresh_token: req.session.mondo.refresh_token
+		}
+	})
+		.then((res) => {
+			req.session.mondo = res.body;
+		});
+}
+
 exports.getLocations = function (options, req) {
 	options = Object.assign({
-		since: new Date(2016, 0, 1)
+		since: new Date(2016, 0, 1),
+		retry: true
 	}, options);
 
 	var accountId = req.session.mondoAccounts[0].id;
@@ -104,4 +123,14 @@ exports.getLocations = function (options, req) {
 				// Remove undefined elements
 				.filter((transaction) => transaction);
 		})
+		.catch((err) => {
+			// @todo: check err status code and test this code
+
+			if (options.retry) {
+				options.retry = false;
+				return refresh(req).then(() => exports.getLocations(options, req));
+			} else {
+				return Promise.reject(err);
+			}
+		});
 };
