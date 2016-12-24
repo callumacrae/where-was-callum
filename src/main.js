@@ -20,7 +20,12 @@ const router = new VueRouter({
 		{
 			path: '/heatmap',
 			name: 'heatmap',
-			component: require('./components/pages/HeatMap')
+			component: require('./components/pages/Heatmap')
+		},
+		{
+			path: '/timemap',
+			name: 'timemap',
+			component: require('./components/pages/Timemap')
 		}
   ]
 });

@@ -13,6 +13,7 @@
 
 		<router-link :to="{ name: 'map' }" v-if="linkViewable">View map</router-link>
 		<router-link :to="{ name: 'heatmap' }" v-if="linkViewable">View heatmap</router-link>
+		<router-link :to="{ name: 'timemap' }" v-if="linkViewable">View timemap</router-link>
 	</div>
 </template>
 
