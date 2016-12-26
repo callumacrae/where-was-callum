@@ -10,7 +10,10 @@ export default function MapTimeline(map, locations) {
 	});
 
 	this.current = {
-		time: 0
+		time: 0,
+		location: {
+			name: ''
+		}
 	};
 }
 

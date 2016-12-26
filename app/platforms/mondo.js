@@ -97,7 +97,8 @@ exports.getLocations = function (options, req) {
 						'Mamouns Falafel',
 						'O.co/overstock.com 800',
 						'Amazon Digital Downloads',
-						'Queens Ice And Bowl'
+						'Queens Ice And Bowl',
+						'Transport for London'
 					];
 
 					if (shitlist.includes(transaction.merchant.name.trim())) {
