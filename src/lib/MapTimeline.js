@@ -20,11 +20,11 @@ export default function MapTimeline(map, locations) {
 const scale = chroma.scale(['red', 'blue']).mode('lab');
 
 MapTimeline.prototype.setTime = function setTimelineTime(time) {
-	let lastLocation;
+	let currentLocation, nextLocation;
 
 	this.locations.forEach((location) => {
 		if (location.time <= time) {
-			lastLocation = location;
+			currentLocation = location;
 
 			if (!location.point) {
 				location.point = L.circle([location.location.lat, location.location.lng], {
@@ -34,7 +34,7 @@ MapTimeline.prototype.setTime = function setTimelineTime(time) {
 					radius: 50
 				}).bindPopup(JSON.stringify(location)).addTo(this.map);
 
-				this.map.panTo(new L.LatLng(location.location.lat, location.location.lng));
+				// this.map.flyTo(new L.LatLng(location.location.lat, location.location.lng));
 			} else {
 				const daysToChangeColor = 2;
 				const daysToChangeOpacity = 15;
@@ -50,12 +50,29 @@ MapTimeline.prototype.setTime = function setTimelineTime(time) {
 				});
 			}
 		} else {
+			if (!nextLocation) {
+				nextLocation = location;
+			}
 			// @todo: hide existing ones so we can pan backwards
 		}
 	});
 
+	if (nextLocation && currentLocation) {
+		const percent = (time - currentLocation.time) / (nextLocation.time - currentLocation.time);
+
+		const currentCoords = currentLocation.location;
+		const nextCoords = nextLocation.location;
+
+		const currentPan = [
+			currentCoords.lat * (1 - percent) + nextCoords.lat * percent,
+			currentCoords.lng * (1 - percent) + nextCoords.lng * percent
+		];
+
+		this.map.setView(new L.LatLng(currentPan[0], currentPan[1]));
+	}
+
 	this.current.time = time;
-	this.current.location = lastLocation;
+	this.current.location = currentLocation;
 };
 
 const start2016 = new Date(2016, 0, 1).getTime();
